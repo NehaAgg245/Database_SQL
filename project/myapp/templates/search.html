@@ -1,0 +1,45 @@
+{% extends "header.html" %}
+
+{% block content %}
+	<br>
+	<h4  class="text-center mt-2"> Search for your contact </h4>
+	<br>
+	<form method = 'GET' action = ''>
+	<input type = 'text' class="form-control mx-auto" style="width:70%" name = 'q' placeholder = 'Search contacts' value = '{{ request.GET.q }}'/>
+	<br>
+	<br>
+	<div class="col-md-12 text-center"> 
+		<input type = 'submit' class ="btn btn-secondary btn-lg" value = 'Search'/>
+	</div>
+	</form>
+	<br>
+	<br>
+	<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Name</th>
+      <th scope="col">Address</th>
+      <th scope="col">Phone</th>
+      <th scope="col">Dates</th>
+      <th scope="col">Update</th>
+      <th scope="col">Delete</th>
+    </tr>
+  </thead>
+  <tbody>
+	{% for value in data %}
+		{% csrf_token %}
+		<tr>
+			<td>{{ forloop.counter }}</td>
+			 <td>{{value.fname|default_if_none:""}} {{value.mname|default_if_none:""}} {{value.lname|default_if_none:""}}</td>
+			 <td>{% for a in value.address_set.all%}  {{a.address_type|default_if_none:"" }} {% if a.address_type %} : {% endif %}  {{a.address|default_if_none:"" }} {{a.city|default_if_none:""}} {{a.state|default_if_none:""}} {{a.zip_code|default_if_none:""}} <br> {% endfor %}</td>
+			 <td>{% for p in value.phone_set.all %} {{p.phone_type|default_if_none:"" }} {% if p.phone_type %} : {% endif %}  {{p.area_code|default_if_none:""}}{{p.ph_number|default_if_none:""}} <br> {% endfor %}</td>
+			 <td>{% for d in value.dates_set.all %} {{d.dates_type|default_if_none:"" }} {% if d.dates_type %} : {% endif %} {{d.dates|default_if_none:""}} <br> {% endfor %}</td>
+			 <td> <a href="{% url 'update_contact' value.contact_id %}"> <button type="submit" class="btn btn-info">Update</button></a></td>
+			 <td><a href="{% url 'delete_contact' value.contact_id %}"><button type="submit" class="btn btn-info">Delete</button></a></td>
+		</tr>
+	{% endfor %}
+	</tbody>
+	</table>
+
+{% endblock %}
